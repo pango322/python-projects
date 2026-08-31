@@ -1,11 +1,22 @@
-#systemctl --user enable --now ydotool.service
+#sudo modprobe uinput
+#sudo .venv/bin/python test.py
 import time
 import keyboard
-import subprocess
+from evdev import UInput, ecodes 
+
+mouse = UInput({
+    ecodes.EV_KEY: [ecodes.BTN_LEFT],
+    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y]
+}, name="Python Virtual Mouse") #creates a virtual mouse that can be controlled by python
 
 while True:
     if keyboard.is_pressed("x"):
-        subprocess.run(["ydotool", "click", "0xC0"])
-        time.sleep(0.03)
+        mouse.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 1)
+        mouse.syn()
+
+        mouse.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 0)
+        mouse.syn()
+
+        time.sleep(0.005) #5 milliseconds
     else:
         time.sleep(0.01)

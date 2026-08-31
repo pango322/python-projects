@@ -1,0 +1,2 @@
+to install packages:
+.venv/bin/python -m pip install numpy scipy matplotlib
