@@ -56,3 +56,21 @@ class Solution:
             l2 = l2.next
             print(current)
         return(l3.next)
+
+#lengthoflongestSubstring
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        result = 0
+        substringlen = 1
+        while substringlen <= len(s):
+            found = False
+            for i in range(len(s) - substringlen + 1): #how often we can loop through (can be optimized further)
+                substring = s[i:substringlen+i] #each substring possible
+                if len(substring) == len(set(substring)): #check if there are no duplicates
+                    found = True #dont leave yet check larger substrings
+                    result = substringlen #this is the highest we found
+                    break #we need to check a larger length since we found out we have a substring with no dupes
+            if found == False:
+                break
+            substringlen += 1
+        return result
