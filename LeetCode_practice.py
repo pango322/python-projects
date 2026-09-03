@@ -82,3 +82,22 @@ class Solution:
             return((merged[len(merged)//2]+merged[len(merged)//2-1])/2)
         else:
             return(merged[len(merged)//2])
+
+#longest palindrome substring
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        found = False #s == s[::-1]
+        pal = s[0]
+        pallen = 1
+        while pallen <= len(s):
+            found = False
+            for i in range(len(s) - pallen + 1): #loops the number of times we have substrings of this length
+                subs = s[i:pallen+1]
+                if subs == subs[::-1]: #check if its a palindrome
+                    found = True #we can keep going
+                    pal = subs
+                    break #we can skip to the next size since we found a pal
+            if found == False:
+                break #we havent found a palindrome at this length
+            pallen += 1 #we can go to the next size up
+        return pal
