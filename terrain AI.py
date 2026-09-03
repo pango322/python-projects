@@ -2,6 +2,7 @@ import math
 import pygame
 import moderngl
 import numpy as np
+import random
 
 
 # ============================================================
@@ -468,7 +469,7 @@ class TerrainApp:
         self.wireframe = False
         self.dragging = False
 
-        self.seed = 1234
+        self.seed = random.randint(1000, 9999)
 
         self.terrain = Terrain(
             resolution=120,
