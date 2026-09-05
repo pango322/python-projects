@@ -3,9 +3,8 @@ import moderngl
 from altitude_generator import * #simply using import altitude_generator is enough but i prefer not using namespaces even if its more confusing
 from helpers import * #same as above
 
-screenx = 800
-screeny = 600
 pygame.init()
+screenx, screeny = pygame.display.get_desktop_sizes()[0]
 
 screen = pygame.display.set_mode((screenx, screeny), pygame.OPENGL | pygame.DOUBLEBUF) #start an opengl capable window with doublebuff meaning 2x the render
 
@@ -52,7 +51,7 @@ program = ctx.program( #stole this shader it should be simple just makes sure th
 
 vao = ctx.vertex_array(program, [(vbo, '3f', 'position')], ibo) #tells the GPU how to interpret the data we sent it connects the shader to the data
 
-eye = np.array([40, 10, 20], dtype="f4") #camera position
+eye = np.array([70, 20, 70], dtype="f4") #camera position
 target = np.array([0, 0, 0], dtype="f4") #target position
 
 view = look_at(eye, target) #creates a view matrix that will be used to transform the vertices from world space to camera space
@@ -63,14 +62,16 @@ program['mvp'].write(mvp.T.astype('f4').tobytes()) #sends the model-view-project
 
 
 running = True
+needs_redraw = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        vao.render(moderngl.TRIANGLES) #this is the part that actually draws the mesh to the screen
 
         ctx.clear(0.1, 0.1, 0.1) #clear the screen with a dark gray color
-        vao.render(moderngl.TRIANGLES)
+        needs_redraw = True
+    if needs_redraw:
+        needs_redraw = False
+        vao.render(moderngl.TRIANGLES) #this is the part that actually draws the mesh to the screen
         pygame.display.flip() #swap the front and back buffers to display the rendered image
-
 pygame.quit()

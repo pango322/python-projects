@@ -9,6 +9,65 @@ y = np.linspace(0, 6, resolution)
 xv, yv = np.meshgrid(x, y) #a grid of x and y values that will be used to create a more interesting heightmap
 heightmap = np.sin(xv) * np.cos(yv) * 5.0 #this is a more interesting heightmap that will look like rolling hills since its just sin and cosine
 
+#--------------------------new heightmap generation code--------------------------
+resolution = 100
+height_scale = 5
+octaves = 5
+
+rng = np.random.default_rng(1234)
+
+heightmap = np.zeros(
+    (resolution, resolution),
+    dtype="f4"
+)
+
+amplitude = 1.0
+total_amplitude = 0.0
+
+for octave in range(octaves):
+
+    frequency = 2 ** octave
+
+    lattice = rng.uniform(
+        -1,
+        1,
+        (frequency + 1, frequency + 1)
+    )
+
+    x = np.linspace(0, frequency, resolution)
+    z = np.linspace(0, frequency, resolution)
+
+    x0 = np.floor(x).astype(int)
+    z0 = np.floor(z).astype(int)
+
+    x0 = np.minimum(x0, frequency - 1)
+    z0 = np.minimum(z0, frequency - 1)
+
+    x1 = x0 + 1
+    z1 = z0 + 1
+
+    tx = x - x0
+    tz = z - z0
+tx = tx * tx * (3 - 2 * tx)
+tz = tz * tz * (3 - 2 * tz)
+v00 = lattice[z0[:, None], x0[None, :]]
+v10 = lattice[z0[:, None], x1[None, :]]
+v01 = lattice[z1[:, None], x0[None, :]]
+v11 = lattice[z1[:, None], x1[None, :]]
+top = v00 * (1 - tx[None, :]) + v10 * tx[None, :]
+bottom = v01 * (1 - tx[None, :]) + v11 * tx[None, :]
+noise = (
+    top * (1 - tz[:, None])
+    + bottom * tz[:, None]
+)
+heightmap += noise * amplitude
+
+total_amplitude += amplitude
+amplitude *= 0.5
+heightmap /= total_amplitude
+heightmap *= height_scale
+#--------------------------new heightmap generation code--------------------------
+
 #now we need to convert the heightmap into xyz points centered around the origin so that we can use it to create a 3D mesh
 
 vertices = []

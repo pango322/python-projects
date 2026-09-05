@@ -101,3 +101,12 @@ class Solution:
                 break #we havent found a palindrome at this length
             pallen += 1 #we can go to the next size up
         return pal
+
+class Solution:
+    def convert(self, s: str, numRows: int) -> str:
+        for i in range(numRows):
+            if numRows%(i+1) == 0:
+                for x in range(len(s)//(numRows+2)):
+                    print(s[i], end='')
+                    for l in range(numRows-2):
+                        print(" ", end = "")
